@@ -1,0 +1,32 @@
+submissions={}
+function createSubmissionsModal(){
+var mod = document.getElementById('submissionsmodal');
+mod.removeAttribute('hidden')
+for (i=0,i<(submissions.length),i++){
+  var img="/../client/memes/'+i+'.gif"
+  var chillin=("<img class='card' id="+i+" src="+img+"></img>"")
+  mod.appendChild(chillin)
+}
+
+}
+class ccTurn{
+  constructor(socks,playerList,currentChooser){
+  this._players=socks;
+  this._turns=[null,null,null,null]
+
+
+
+  }
+_getcardset(){
+return([1,5,4,2,3,7,6])
+}
+  _sendToPlayer(playerIndex,msg){
+    this._players[playerIndex].emit('message', msg);
+  }
+    _sendToPlayers(msg){
+      this._players.forEach((player) => {
+        player.emit('message', msg);
+      });
+    }
+
+    }

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+ <meta charset="utf-8">
+  <title>
+	Crappy Captions
+  </title>
+<link rel="stylesheet" href="/../styles/mainstyles.css">
+<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@200&display=swap" rel="stylesheet">
+ </head>
+ <body>
+<div id='nKname_setter'>
+  <form id='nKname_form'>
+    <label for='nickname'>Please, enter thy name:</label>
+    <input id='nKname' name='nickname' autofocus></input><br>
+    <button id="usernamesubmit" autofocus >Enter</button>
+  </form>
+</div>
+
+<div id='modal'>
+  <img class='submission' id='sub1' alt='a simple animated picture' src='/memes/0.gif'>
+  <img class='submission' id='sub2' alt='a simple animated picture' src='/memes/0.gif'>
+  <img class='submission' id='sub3' alt='a simple animated picture' src='/memes/0.gif'>
+  <h3 id='submissionstatus'>and the winner is....</h3>
+</div>
+
+
+<div id='thevideoplaceholder'>
+  <div id='theweirddashedbordermaker'>
+  <p>this monstrous gray matter is to tell you that<br>
+     you should get some friends on a video chat<br><br><br><i>    ...loser<i></p>
+  </div>
+</div>
+<div id='makewayforthevideo'>
+
+<div id='title'>
+  <h2>I don't fucking know - its a game, okay?</h2>
+  <h2>It's fun and its disgustingly horrible.</h2>
+</div>
+
+<div id='standings'>
+    <ul>
+      <h3 id='standingstitle'>Current Standings:</h3>
+      <li class='result' id='p1'> Player 1: 0/5</li>
+      <li class='result' id='p2'> Player 2: 0/5</li>
+      <li class='result' id='p3'> Player 3: 0/5</li>
+      <li class='result' id='p4'> Player 4: 0/5</li>
+  </ul>
+</div>
+
+  <div id='cards'>
+  <img class='card' id='card1' alt='a simple animated picture' src='0.gif'>
+  <img class='card' id='card2' alt='a simple animated picture' src='0.gif'>
+  <img class='card' id='card3' alt='a simple animated picture' src='0.gif'>
+  <img class='card' id='card4' alt='a simple animated picture' src='0.gif'>
+  <img class='card' id='card5' alt='a simple animated picture' src='0.gif'>
+  <img class='card' id='card6' alt='a simple animated picture' src='0.gif'>
+  <img class='card' id='card7' alt='a simple animated picture' src='0.gif'>
+  </div>
+
+<div id='captionboard'>
+  <span>Caption:</span>
+  <h2 id='prompt'>tester here</h2>
+</div>
+
+  <div id='hub'>
+    <ul id='status'>
+      <li>Waiting on players..</li>
+    </ul>
+    <button id='submitcard'>Send</button>
+  </div>
+
+
+</div>
+<script src="/socket.io/socket.io.js"></script>
+<script src="src/client.js"></script>
+ </body>
+</html>
