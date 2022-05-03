@@ -26,7 +26,7 @@ export default class Tile extends React.Component {
 
     const tileSize = {
       width: this.props.cardSize, 
-      height: ,
+      height: 1,
   };
   const clkd = {
     container: {
