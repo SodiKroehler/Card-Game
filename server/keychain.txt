@@ -1,0 +1,3 @@
+mySQLrootpwd: test84=Hirosafe
+mySQLmachineuser: lilyamatheflappybimbo
+mySQLmachinepwd: theB00biesarentreal!

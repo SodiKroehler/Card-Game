@@ -13,6 +13,10 @@ class Player{
         this.popularity = 0;
         this.submissionIndex = 0;
         this.ready = false;
+        
+    }
+    emailLookup(player_email){
+      this.email = player_email
     }
     setPlayerID(id){
       this.id = id;

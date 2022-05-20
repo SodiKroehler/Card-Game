@@ -1,5 +1,5 @@
 //constants
-const http=require("http");
+//const http=require("http");
 const express = require("express");
 const app = express();
 const server = http.createServer(app);
@@ -29,6 +29,12 @@ let rooms = [];
 io.on("connection", socket => {
   let player = new Player(socket.id);
   socket.emit("message", "New Connection Successful");
+
+  //email lookup
+  socket.on("email", (player_email) =>{
+    player.emailLookup(player_email)
+  })
+  
   socket.on("nickname", (nKname) => {
     player.setPlayerNickname(nKname);
   });
