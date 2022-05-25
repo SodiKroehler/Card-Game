@@ -15,17 +15,33 @@ class Player{
         this.ready = false;
         
     }
-    emailLookup(player_email){
-      this.email = player_email
+    loadPlayer(info){
+      for (key in Object.keys(info)){
+        if (key == "user_id") this.playerID = info[key];
+        else if (key == "user_email") this.email = info[key];
+        else if (key == "user_name") this.name = info[key];
+        else if (key == "user_riddle") this.riddle = info[key];
+        else if (key == "user_ridAnswer") this.ridAnswer = info[key];
+        else if (key == "user_adultContent") this.adultCont = info[key];
+        else if (key == "user_color") this.color = info[key];
+      }
+    }
+    getRiddle(){
+      return this.riddle;
+    }
+    getUserName(){
+      return this.name;
     }
     setPlayerID(id){
       this.id = id;
     }
-    setPlayerNickname(nkName){
-      this.nickName = nkName;
-    }
     setPlayerNumber(n){
       this.playerNumber = n;
+    }
+    authenticate(ridAnswer){
+      if (ridAnswer == this.ridAnswer) {
+        return true;
+      } else return false;
     }
     reset(){
       this.votes = 0;

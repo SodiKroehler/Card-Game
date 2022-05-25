@@ -1,12 +1,14 @@
 //constants
-//const http=require("http");
+const configs = require("./config.js");
+const http=require("http");
 const express = require("express");
 const app = express();
 const server = http.createServer(app);
 const socketio = require('socket.io');
-const fs = require('fs');
+//const fs = require('fs');
 const Game = require('./Game');
 const Player = require('./Player');
+const THESEUS = require('./THESEUS/THESEUS.js');
 const promptsList = require('./prompts.json');
 const UUID = require('uuid');
 const io = socketio(server, {
@@ -15,44 +17,54 @@ const io = socketio(server, {
     methods: ["GET", "POST"]
   }
 });
-const port = 9000;
-//const io=socketio(server);
+const port = 3000;
 
-//added for pre-React testing
-//const clientPath = `${__dirname}/../client`;
-//app.use(express.static(clientPath));
-//variables
-
-let rooms = [];
+app.get('/', (req, res) => {
+  THESEUS.findPlayer("tadashihamada@gmail.com").then((tabledata) => {
+    res.send(tabledata);
+    console.log(tabledata);
+  }).catch((error) => {console.log("error" + error)});
+})
 
 //on socket connection
 io.on("connection", socket => {
   let player = new Player(socket.id);
-  socket.emit("message", "New Connection Successful");
+  socket.emit("debug", "New Connection Successful");
 
   //email lookup
   socket.on("email", (player_email) =>{
-    player.emailLookup(player_email)
+    THESEUS.findPlayer(player_email).then((info) => {
+      if (info != null){
+        player.loadPlayer(info);
+        socket.emit("open", {"type":"login", "data": [player.getRiddle(), player.getUserName()]});
+      } else {
+        socket.emit("open", {"type":"registration", "data": []});
+      }
+    }).catch((error) => {console.log("error " + error)});
   })
   
-  socket.on("nickname", (nKname) => {
-    player.setPlayerNickname(nKname);
+  socket.on("registration", (info) => {
+    //info must be the same as mysql result
+    player.loadPlayer(info);
   });
 
-  socket.on("joinRoom", (rIdx) => {
+  socket.on("login", (ridAnswer) => {
+    player.authenticate(ridAnswer);
+  });
 
-    var foundTheRoom = false;
-    for (i=0;i<rooms.length;i++){
-      if (rooms[i].id === rIdx){
-        rooms[i].addPlayer(player);
-        foundTheRoom = true;
+  socket.on("joinRoom", (roomId) => {
+    //promise functionality for future room db (?)
+    THESEUS.findRoom(player_email).then((room) => {
+      if (room != null){
+        room.addPlayer(player); 
+      } else {
+        const newRoom = new Game(roomId);
+        newRoom.addPlayer(player);
+        THESEUS.addRoom(newRoom);
       }
-    }
-    if (!foundTheRoom){
-      const newRoom = new Game(rIdx);
-      newRoom.addPlayer(player);
-      rooms.push(newRoom);
-    }
+    }).catch((error) => {console.log("error " + error)});
+  });
+
     socket.join(rIdx);
     socket.emit("gameRoomNumber",rIdx);
   });
@@ -207,7 +219,7 @@ function sendToRoom (type,rIdx,msg) {
     io.to(rIdx).emit(type, msg);
   }
 }
-server. on('error', (err)=>{
+server.on('error', (err)=>{
   console.error('Server error:', err);
 });
 

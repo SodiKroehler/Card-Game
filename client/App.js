@@ -13,9 +13,6 @@ import {purp, cream, deGris } from './styles/common';
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
-
-
-
 export default class App extends React.Component {
   constructor() {
     super();
@@ -159,14 +156,21 @@ export default class App extends React.Component {
 
     render(){
       var modalVariable;
-      if (this.state.modalType === "intro"){
-        modalVariable = <IntroModal changeNickname = {this.handleNickname.bind(this)} joinGame = {this.joinCorrectTypeGameRoom.bind(this)}/>
-      } else if (this.state.modalType === "submission"){
-        modalVariable = <SubmissionsModal cards = {this.submissionsToRateDetails} cardNameArray = {this.submissionsToRate} submitRatings = {this.submitRatings.bind(this)}/>
-      } else if (this.state.modalType === "winner"){
-        modalVariable = <WinnerModal winner= {this.state.winner} prompt = {this.state.prompt}/>
+      if (this.state.modalType === "intro")
+      {
+        modalVariable = <IntroModal changeNickname = {this.handleNickname.bind(this)} 
+        joinGame = {this.joinCorrectTypeGameRoom.bind(this)}/>
+      } else if (this.state.modalType === "submission")
+      {
+        modalVariable = <SubmissionsModal cards = {this.submissionsToRateDetails} 
+        cardNameArray = {this.submissionsToRate} submitRatings = {this.submitRatings.bind(this)}/>
+      } else if (this.state.modalType === "winner")
+      {
+        modalVariable = <WinnerModal winner= {this.state.winner} 
+        prompt = {this.state.prompt}/>
       }
-      else if (this.state.modalType === "none"){
+      else if (this.state.modalType === "none")
+      {
         modalVariable = null;
       }
         

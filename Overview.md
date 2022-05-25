@@ -95,5 +95,5 @@ User enters email; `player` asks THESEUS for token
 
 - get authorization working /doneithink
 - get video working
-- set up THESEUS
+- set up THESEUS / done i think
 - finish up react
