@@ -1,0 +1,16 @@
+{
+  "name": "theseus",
+  "version": "0.2.0",
+  "description": "data-lake for card-game",
+  "main": "app.js",
+  "scripts": {
+    "test": "scripts.test",
+    "dev": "node ./src/app.js"
+  },
+  "author": "Sodi Kroehler",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.0.1",
+    "mysql2": "^2.3.3"
+  }
+}

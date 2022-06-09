@@ -1,0 +1,11 @@
+{
+  "name": "sphinx",
+  "version": "0.2.0",
+  "description": "authentication for card-game",
+  "main": "app.js",
+  "scripts": {
+    "test": "scripts.test"
+  },
+  "author": "Sodi Kroehler",
+  "license": "ISC"
+}

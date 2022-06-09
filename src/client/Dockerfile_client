@@ -1,0 +1,21 @@
+FROM kerbe/expo
+COPY /../../assets/ ./assets
+COPY . .
+CMD ["node" "web"]
+
+   client:
+    image: kerbe/expo
+    build:
+      dockerfile: ./src/client/Dockerfile_client
+    command: start -p 19006
+    ports:
+      - 19000:19000
+      - 19001:19001
+      - 19002:19002
+      - 19006:19006
+    working_dir: /client
+    volumes:
+      - ./src/client:/client
+    environment:
+      REACT_NATIVE_PACKAGER_HOSTNAME: 192.168.1.101
+      EXPO_DEVTOOLS_LISTEN_ADDRESS: 0.0.0.0

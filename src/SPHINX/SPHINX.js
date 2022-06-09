@@ -1,9 +1,7 @@
 require("dotenv").config()
 const jwt = require("jsonwebtoken")
 
-app.get('/posts', authenticateToken, (req, res) => {
-    res.json(posts.filter(post => post.username === req.user.name))
-})
+
 
 app.post('/login', (req, res) => {
     const username = req.body.username

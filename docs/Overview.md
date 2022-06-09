@@ -97,3 +97,9 @@ User enters email; `player` asks THESEUS for token
 - get video working
 - set up THESEUS / done i think
 - finish up react
+
+
+### STRUCTURE
+
+As of 5/26: spa with microservice structure?
+SPHINX handles auth, THESEUS handles data, HECTOR handles client, HERMES handles rtc

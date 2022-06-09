@@ -1,0 +1,11 @@
+{
+  "name": "hermes",
+  "version": "0.2.0",
+  "description": "rtc for card-game",
+  "main": "app.js",
+  "scripts": {
+    "test": "scripts.test"
+  },
+  "author": "Sodi Kroehelr",
+  "license": "ISC"
+}
