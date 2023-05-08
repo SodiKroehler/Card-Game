@@ -103,3 +103,11 @@ User enters email; `player` asks THESEUS for token
 
 As of 5/26: spa with microservice structure?
 SPHINX handles auth, THESEUS handles data, HECTOR handles client, HERMES handles rtc
+
+Need to be able to scroll videos 
+- save
+- "refresh"
+- different
+
+need to determine "ethics level" - should be able to set certain lines, but also learn based on different 
+maybe get rid of prompts - have to give a gif and everyone send better 
