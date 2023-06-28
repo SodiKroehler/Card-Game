@@ -8,10 +8,10 @@ class Player{
         this.score = 0;
         this.cardSet=[];
         this.playerNumber = null;
-        this.id = sockId;
-        this.nickName = null;
-        this.popularity = 0;
-        this.submissionIndex = 0;
+        this.socketId = sockId;
+        this.nickname = null;
+        // this.popularity = 0;
+        // this.submissionIndex = 0;
         this.ready = false;
         
     }
@@ -35,6 +35,15 @@ class Player{
     setPlayerID(id){
       this.id = id;
     }
+    setPlayerReady(){
+      this.ready = true
+    }
+    isReady(){
+      return this.ready;
+    }
+    updateScore(change){
+      this.score += change;
+    }
     setPlayerNumber(n){
       this.playerNumber = n;
     }
@@ -46,19 +55,8 @@ class Player{
     reset(){
       this.votes = 0;
       this.popularity = 0;
-      this.submissionIndex = 0;
+      // this.submissionIndex = 0;
     }
-  /*  updateCardSet(newCardList){
-      this.cardSet = newCardList;
-      var cardArray=[];
-      for (var card in this.cardSet){
-        let index = this.cardSet[card];
-          const data = fs.readFile('./memes/' + index + '.json', 'base64', function (err, data){
-            if (err) throw err;
-            cardArray[card] = [index,data];
-          });
-    }
-  }*/
 }
 
   module.exports = Player;
