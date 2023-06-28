@@ -2,7 +2,7 @@
 const http=require("http");
 const express = require("express");
 const socketio = require('socket.io');
-//const fs = require('fs');
+const fs = require('fs');
 //const morgan = require('morgan');
 
 //custom modules
@@ -21,212 +21,195 @@ const io = socketio(server, {
     methods: ["GET", "POST"]
   }
 });
-const port = 4000;
+const rooms = new Object();
+const PORT = 4000;
 
-app.get('/', (req, res) => {
-  THESEUS.initDB().then(()=> {
-  }).catch((error) => {console.log(error)});
-  THESEUS.find_user("tadashihamada@gmail.com").then((tabledata) => {
-    res.send(tabledata);
-    console.log(tabledata);
-  }).catch((error) => {console.log("error" + error)});
-})
+// app.get('/', (req, res) => {
+//   THESEUS.initDB().then(()=> {
+//   }).catch((error) => {console.log(error)});
+//   THESEUS.find_user("tadashihamada@gmail.com").then((tabledata) => {
+//     res.send(tabledata);
+//     console.log(tabledata);
+//   }).catch((error) => {console.log("error" + error)});
+// })
 
-// //on socket connection
-// io.on("connection", socket => {
-//   let player = new Player(socket.id);
-//   socket.emit("debug", "New Connection Successful");
+//on socket connection
+io.on("connection", socket => {
+  let player = new Player(socket.id);
+  socket.emit("debug", "New Connection Successful");
 
-//   //email lookup
-//   // socket.on("email", (player_email) =>{
-//   //   THESEUS.findPlayer(player_email).then((info) => {
-//   //     if (info != null){
-//   //       player.loadPlayer(info);
-//   //       socket.emit("open", {"type":"login", "data": [player.getRiddle(), player.getUserName()]});
-//   //     } else {
-//   //       socket.emit("open", {"type":"registration", "data": []});
-//   //     }
-//   //   }).catch((error) => {console.log("error " + error)});
-//   // })
+  //email lookup
+  // socket.on("email", (player_email) =>{
+  //   THESEUS.findPlayer(player_email).then((info) => {
+  //     if (info != null){
+  //       player.loadPlayer(info);
+  //       socket.emit("open", {"type":"login", "data": [player.getRiddle(), player.getUserName()]});
+  //     } else {
+  //       socket.emit("open", {"type":"registration", "data": []});
+  //     }
+  //   }).catch((error) => {console.log("error " + error)});
+  // })
   
-//   socket.on("registration", (info) => {
-//     //info must be the same as mysql result
-//     player.loadPlayer(info);
-//   });
+  socket.on("registration", (info) => {
+    //info must be the same as mysql result
+    player.loadPlayer(info);
+  });
 
-//   socket.on("login", (ridAnswer) => {
-//     player.authenticate(ridAnswer);
-//   });
+  socket.on("login", (ridAnswer) => {
+    player.authenticate(ridAnswer);
+  });
 
-//   // socket.on("joinRoom", (roomId) => {
-//   //   //promise functionality for future room db (?)
-//   //   THESEUS.findRoom(player_email).then((room) => {
-//   //     if (room != null){
-//   //       room.addPlayer(player); 
-//   //     } else {
-//   //       const newRoom = new Game(roomId);
-//   //       newRoom.addPlayer(player);
-//   //       THESEUS.addRoom(newRoom);
-//   //     }
-//   //   }).catch((error) => {console.log("error " + error)});
-//   // });
+  socket.on("nickname", (nickname) => {
+    player.nickname = nickname;
+  });
+  // socket.on("joinRoom", (roomId) => {
+  //   //promise functionality for future room db (?)
+  //   THESEUS.findRoom(player_email).then((room) => {
+  //     if (room != null){
+  //       room.addPlayer(player); 
+  //     } else {
+  //       const newRoom = new Game(roomId);
+  //       newRoom.addPlayer(player);
+  //       THESEUS.addRoom(newRoom);
+  //     }
+  //   }).catch((error) => {console.log("error " + error)});
+  // });
 
-//   //   socket.join(rIdx);
-//   //   socket.emit("gameRoomNumber",rIdx);
-//   // });
+  //   socket.join(rIdx);
+  //   socket.emit("gameRoomNumber",rIdx);
+  // });
 
-//   socket.on("startRoom", () => {
-//     const newUUID = UUID.v4();
-//     roomNum = newUUID.toString().substring(0,6);
-//     socket.join(roomNum);
-//     const newRoom = new Game(roomNum);
-//     newRoom.addPlayer(player);
-//     rooms.push(newRoom);
-//     socket.emit("gameRoomNumber",roomNum);
-//   });
+  socket.on("startRoom", (roomNum) => {
+    if (roomNum == ""){
+      const newUUID = UUID.v4();
+      roomNum = newUUID.toString().substring(0,6);
+    }
 
-//   socket.on("ready", () => {
-//     player.ready = true;
-//     const gameRoomSet = socket.rooms.keys();
-//     const tempVar = gameRoomSet.next();
-//     const currentGameRoom = gameRoomSet.next().value;
-//     for (i=0;i<rooms.length;i++){
-//       if (rooms[i].id === currentGameRoom){
-//         var everyonesReady = true;
-//         for(var plyr=0;plyr<rooms[i].playerCount;plyr++){
-//           if(rooms[i].playerDict[plyr].ready == false){
-//             everyonesReady = false;
-//           }
-//         }
-//         if(everyonesReady){
-//           rooms[i].startGame();
-//           for(var n=0;n<7;n++){
-//             let index = player.cardSet[n];
-//             var cardTuple = [];
-//             var bitmap = fs.readFileSync('./memes/' + index + '.gif');
-//             const data = new Buffer.from(bitmap).toString('base64');
-//             cardTuple = [index,data];
-//             socket.emit("card", cardTuple);
-//           }
-//           sendToRoom("message", currentGameRoom, "Choose the best card for this caption");
-//           sendToRoom("prompt", currentGameRoom, rooms[i].currentPrompt);
-//         }
-//       }
-//     }
+    socket.join(roomNum);
+    const newRoom = new Game(roomNum);
+    newRoom.addPlayer(player);
+    rooms[roomNum] = newRoom;
+    socket.emit("roomCreationSuccess", roomNum);
+  });
 
-//   });
+  socket.on("ready", () => {
+    const currentGameRoom = getRoomFromSocket(socket.rooms.keys());
+    currentGameRoom.getPlayer(socket.id).setPlayerReady();
+    var everyonesReady = currentGameRoom.everyoneIsReady();
+    if(everyonesReady){
+      currentGameRoom.startGame();
+      for(var n=0;n<7;n++){
+        let cardName = player.cardSet[n];
+        var cardTuple = [];
+        cardTuple = [n, cardName, getGifFromCardName(cardName)];
+        socket.emit("card", cardTuple);
+      }
+      sendToRoom("message", currentGameRoom, "choose the best chit");
+      sendToRoom("prompt", currentGameRoom, currentGameRoom.currentPrompt);
+    }
+  });
 
-//   socket.on("submission", (cardIdx) => {
-//     const gameRoomSet = socket.rooms.keys();
-//     const tempVar = gameRoomSet.next();
-//     const currentGameRoom = gameRoomSet.next().value;
+  socket.on("switchCard", ([cardName, cardId, reason]) => {
+    const currentGameRoom = getRoomFromSocket(socket.rooms.keys());
+    var player = currentGameRoom.getPlayer(socket.id);
+    var replacedCardTuple = currentGameRoom.getReplacementCard(player, cardId);
+    replacedCardTuple[2] = getGifFromCardName(replacedCardTuple[1]);
+    socket.emit("card", replacedCardTuple);
+  });
 
-//     thisId = socket.id;
-//     for (i=0;i<rooms.length;i++){
-//       if (rooms[i].id === currentGameRoom){
-//         for (var p=0; p<rooms[i].playerDict.length;p++){
-//           const plyr = rooms[i].playerDict[p];
-//           console.log(plyr);
-//           if (plyr.id === thisId){
-//             for(let c=0;c<plyr.cardSet.length;c++){
-//               if(plyr.cardSet[c] === cardIdx){
-//                 plyr.submissionIndex = c;
-//               }
-//             }
-//             console.log("just set" + plyr.submissionIndex);
-//           }
-//         rooms[i].submissions.push(cardIdx);
-//         if (Object.keys(rooms[i].submissions).length >= rooms[i].playerCount){
+  socket.on("submission", ([cardName, cardPosition]) => {
 
+    var currentGameRoom = getRoomFromSocket(socket.rooms.keys());
+    var player = currentGameRoom.getPlayer(socket.id);
 
-//           for(var q=0;q<rooms[i].submissions.length;q++){
-//             const index = rooms[i].submissions[q];
-//             var bitmap = fs.readFileSync('./memes/' + index + '.gif');
-//             const data = new Buffer.from(bitmap).toString('base64');
-//             sendToRoom("modalCard", currentGameRoom, data);
-//           }
-//           sendToRoom("modal", currentGameRoom, rooms[i].submissions);
-//         }
-//       }
-//     }
-//   }
-//   });
+    currentGameRoom.addSubmission(player.socketId, cardName, cardPosition);
 
-//   socket.on("vote", (love, hate) => {
+    if (currentGameRoom.submissions.length >= currentGameRoom.numPlayers){
+      //time to rate submissions
+      for (let sub in currentGameRoom.submissions){
+        var cardName = currentGameRoom.submissions[sub][1];
+        var subArray = [getGifFromCardName(cardName), cardName, player.socketId, player.nickname];
+        sendToRoom("submissionCard", currentGameRoom, subArray);
+      }
+      //send a blank so all clients know to show completed
+      sendToRoom("serverMessage", currentGameRoom, "endOfSubmissions");
+    }
+  });
 
-//     const gameRoomSet = socket.rooms.keys();
-//     const tempVar = gameRoomSet.next();
-//     const currentGameRoom = gameRoomSet.next().value;
+  socket.on("vote", (guesses) => {
 
-//     var winner;
-//     for (i=0; i<rooms.length; i++){
-//       if (rooms[i].id === currentGameRoom){
-//         rooms[i].manageVotes(love, hate);
-//         rooms[i].votes++;
+    const currentGameRoom = getRoomFromSocket(socket.rooms.keys());
+    var player = currentGameRoom.getPlayer(socket.id);
 
-//         if (rooms[i].votes >= rooms[i].playerCount){
-//           const currentRoom = rooms[i];
-//           winner = currentRoom.findRoundWinner();
-//           sendToRoom("winner", currentGameRoom, winner);
+    currentGameRoom.tallyVote(guesses);
+    
+    if (currentGameRoom.votes >= currentGameRoom.numPlayers){
+      currentGameRoom.completeRound(isWinner = (winnerNickname) => {
+        socket.emit("winner", winnerNickname);
+      });
+    }
 
-//           if (winner.score >=5) {
-//             currentRoom.endGame();
-//           } else {
-//             for(var m=0;m<rooms[i].playerCount;m++){
-//               var plyr = rooms[i].playerDict[m];
-//               if (plyr.id === socket.id){
-//                 rooms[i].getReplacementCard(plyr);
-//                 let index = plyr.cardSet[plyr.submissionIndex];
-//                 console.log(plyr.submissionIndex);
-//                 var bitmap = fs.readFileSync('./memes/' + index + '.gif');
-//                 const data = new Buffer.from(bitmap).toString('base64');
-//                 const cardTuple = [index,data];
-//                 socket.emit("card",cardTuple);
-//               }
-//             }
-//             currentRoom.resetForNewRound();
-//             sendToRoom("message", currentGameRoom, "Next Round");
-//             sendToRoom("prompt", currentGameRoom, rooms[i].currentPrompt);
-//           }
-//         }
+    for (let p=0; p<currentGameRoom.numPlayers; p++){
+      //send everyone their new scores
+      io.to(currentGameRoom.playerDict[p].socketId).emit('scoreUpdate', currentGameRoom.playerDict[p].score);
 
+    }
 
-//       }
-//     }
-//   });
+    currentGameRoom.resetForNewRound();
+    sendToRoom("serverMessage", currentGameRoom, "newRound");
+  });
 
-//   socket.on("disconnecting", () => {
+  // socket.on("preview", (cardName) => {
+  //   //kept the same format, just for simplicty
+  //   //did not put in the functionality to get the cardPos, although that should be easy
+  //   var retValue = [0, cardName, getVideoFromCardName(cardName)];
+  //   socket.emit("preview", retValue)
+  // });
 
-//     const gameRoomSet = socket.rooms.keys();
-//     const tempVar = gameRoomSet.next();
-//     const currentGameRoom = gameRoomSet.next().value;
+  socket.on("disconnecting", () => {
 
-//     for (i=0;i<rooms.length;i++){
-//       if (rooms[i].id === currentGameRoom){
-//         rooms[i].removePlayer(player);
-//       }
-//     }
-//   });
+    const gameRoomSet = socket.rooms.keys();
+    const tempVar = gameRoomSet.next();
+    const currentGameRoom = gameRoomSet.next().value;
 
-//   socket.on("disconnect", () => {
-//     console.log(socket.id + "left the game");
-//   });
+    for (i=0;i<rooms.length;i++){
+      if (rooms[i].id === currentGameRoom){
+        rooms[i].removePlayer(player);
+      }
+    }
+  });
 
-// });
+  socket.on("disconnect", () => {
+    console.log(socket.id + "left the game");
+  });
 
-// function sendToRoom (type,rIdx,msg) {
-//   if (type === "winner"){
-//     const index = msg.cardSet[msg.submissionIndex];
-//     var bitmap = fs.readFileSync('./memes/' + index + '.gif');
-//     const data = new Buffer.from(bitmap).toString('base64');
-//     io.to(rIdx).emit(type,[msg.nickName, data, index]);
-//   }
-//   if (msg.length > 0){
-//     io.to(rIdx).emit(type, msg);
-//   }
+});
+
+function getRoomFromSocket(keys){
+  const ownRoom = keys.next();
+  const roomID = keys.next().value
+  return rooms[roomID];
+}
+
+function sendToRoom (type,rIdx,msg) {
+  io.to(rIdx.id).emit(type, msg);
+}
+
+function getGifFromCardName(cardName){
+  var bitmap = fs.readFileSync('./../../assets/gifs/' + cardName + '.gif');
+  const data = new Buffer.from(bitmap).toString('base64');
+  return data;
+}
+
+// function getVideoFromCardName(cardName){
+//   var data = fs.readFileSync('./../../assets/videos/02_HAND.mp4');
+//   // var data = fs.readFileSync('./../../assets/memes/video/' + cardName + '.mp4');
+//   // const data = new Buffer.from(bitmap).toString('base64');
+//   return data;
 // }
+
 server.on('error', (err)=>{
   console.error('Server error:', err);
 });
 
-server.listen(port, () => console.log("server running on port:" + port));
+server.listen(PORT, () => console.log("server running on port:" + PORT));
